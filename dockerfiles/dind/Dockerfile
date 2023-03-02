@@ -55,11 +55,14 @@ RUN curl -Lo ./kubectl https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl
 
 # Install Cilium CLI
 RUN curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.13.0/cilium-linux-amd64.tar.gz \
-    && tar xzv -f cilium-linux-amd64.tar.gz -C /usr/local/bin
+    && tar xzv -f cilium-linux-amd64.tar.gz -C /usr/local/bin && rm cilium-linux-amd64.tar.gz
 
 # Install helm-3
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
-    && chmod +x get_helm.sh && ./get_helm.sh
+    && chmod +x get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
+
+## Get Kind configuration
+RUN curl -L https://docs.cilium.io/en/v1.13/_downloads/5d189e574ddd393eb1bcf12c6937ce0f/kind-config.yaml > kind.yaml
 
 # Remove IPv6 alias for localhost and start docker in the background ...
 CMD cat /etc/hosts >/etc/hosts.bak && \
