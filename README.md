@@ -74,3 +74,13 @@ If you need to access your services from outside, use the following URL pattern 
 
 No, it needs to run on those ports for DNS resolve to work. Ideas or suggestions about how to improve this
 are welcome
+
+
+## Troubleshooting
+
+Errors like **Failed to create inotify object: Too many open files**, will require increasing `user.max_inotify_instances` with the command(s) 
+```
+ sudo sysctl fs.inotify.max_user_instances=8192
+ sudo sysctl fs.inotify.max_user_watches=524288
+ sudo sysctl -p
+```
