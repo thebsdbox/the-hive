@@ -1,4 +1,4 @@
-# The-Hive
+# The-Hive 🐝
 
 We love docker and Kubernetes so much that we put docker in docker and kubernetes in that... if you want to go deeper, then feel free!
 
