@@ -1,15 +1,10 @@
-# play-with-docker
+# The-Hive
 
-Play With Docker gives you the experience of having a free Alpine Linux Virtual Machine in the cloud
-where you can build and run Docker containers and even create clusters with Docker features like Swarm Mode.
-
-Under the hood DIND or Docker-in-Docker is used to give the effect of multiple VMs/PCs.
-
-A live version is available at: http://play-with-docker.com/
+We love docker and Kubernetes so much that we put docker in docker and kubernetes in that... if you want to go deeper, then feel free!
 
 ### Requirements
 
-* [Docker `18.06.0+`](https://docs.docker.com/install/)
+* [Docker `20.10.0+`](https://docs.docker.com/install/)
 * [Go](https://golang.org/dl/) (stable release)
 
 ### Development
