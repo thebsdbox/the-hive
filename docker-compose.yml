@@ -4,9 +4,10 @@ services:
         container_name: haproxy
         image: haproxy
         ports:
-            - "80:8080"
+            - "443:443"
         volumes:
             - ./haproxy:/usr/local/etc/haproxy
+            - /etc/letsencrypt/live/the-hive.cloud:/certs
 
     pwd:
         # pwd daemon container always needs to be named this way
@@ -34,7 +35,7 @@ services:
         ports:
             - "8022:22"
             - "8053:53"
-            - "443:443"
+            - "8443:443"
 volumes:
     sessions:
     networks:

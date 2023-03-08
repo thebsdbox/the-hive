@@ -40,7 +40,7 @@ func SessionSetup(rw http.ResponseWriter, req *http.Request) {
 		if pwd.SessionNotEmpty(err) {
 			log.Println("Cannot setup a session that contains instances")
 			rw.WriteHeader(http.StatusConflict)
-			rw.Write([]byte("Cannot setup a session that contains instances"))
+			rw.Write([]byte("Unable to create new instances from template with existing instances"))
 			return
 		}
 		log.Println(err)
