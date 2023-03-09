@@ -26,13 +26,13 @@ var (
 )
 
 var (
-	PortNumber, SessionsFile, PWDContainerName, L2ContainerName, L2Subdomain, HashKey, SSHKeyPath, L2RouterIP, CookieHashKey, CookieBlockKey string
-	UseLetsEncrypt, ExternalDindVolume, NoWindows                                                                                            bool
-	LetsEncryptCertsDir                                                                                                                      string
-	MaxLoadAvg                                                                                                                               float64
-	ForceTLS                                                                                                                                 bool
-	SecureCookie                                                                                                                             *securecookie.SecureCookie
-	AdminToken                                                                                                                               string
+	PortNumber, SessionsFile, PWDContainerName, L2ContainerName, L2Subdomain, HashKey, SSHKeyPath, L2RouterIP, CookieHashKey, CookieBlockKey, PlaygroundLifetime string
+	UseLetsEncrypt, ExternalDindVolume, NoWindows                                                                                                                bool
+	LetsEncryptCertsDir                                                                                                                                          string
+	MaxLoadAvg                                                                                                                                                   float64
+	ForceTLS                                                                                                                                                     bool
+	SecureCookie                                                                                                                                                 *securecookie.SecureCookie
+	AdminToken                                                                                                                                                   string
 )
 
 // Unsafe enables a number of unsafe features when set. It is principally
@@ -69,6 +69,7 @@ func ParseFlags() {
 	flag.StringVar(&AdminToken, "admin-token", "", "Token to validate admin user for admin endpoints")
 
 	flag.StringVar(&SegmentId, "segment-id", "", "Segment id to post metrics")
+	flag.StringVar(&PlaygroundLifetime, "playground-lifetime", "4h", "How long the playground will exist for each user")
 
 	flag.BoolVar(&Unsafe, "unsafe", os.Getenv("PWD_UNSAFE") == "true", "Operate in unsafe mode")
 

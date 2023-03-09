@@ -47,7 +47,7 @@ func main() {
 
 	sch.Start()
 
-	d, err := time.ParseDuration("4h")
+	d, err := time.ParseDuration(config.PlaygroundLifetime)
 	if err != nil {
 		log.Fatalf("Cannot parse duration Got: %v", err)
 	}
