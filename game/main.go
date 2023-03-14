@@ -27,6 +27,8 @@ import (
 // Timeout
 
 func main() {
+	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
 	// Set the scene
 	clearScreen()
 
@@ -49,17 +51,13 @@ func main() {
 	logrus.Infof("You will have [%s] to complete the challenge before the cluster will self destruct", challenge.AllowedTime.String())
 
 	// Create the cluster
-
-	//err = kind.CreateKind("falken")
-	err = k3d.CreateCluster("falken")
+	cluster, err := k3d.CreateCluster("falken")
 	if err != nil {
 		panic(err)
 	}
-	//defer kind.DeleteKind("falken")
+	defer k3d.DeleteCluser(ctx, cluster)
 
 	// Get kubernetes client
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
 	homeConfigPath := filepath.Join(os.Getenv("HOME"), ".kube", "config")
 	clientset, err := k8s.NewClientset(homeConfigPath, false, "")
 	if err != nil {
