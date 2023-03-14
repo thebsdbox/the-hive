@@ -123,6 +123,7 @@ func (r *proxyRouter) listen(wg *sync.WaitGroup, httpAddr, dnsAddr, sshAddr stri
 func (r *proxyRouter) sshHandle(nConn net.Conn) {
 	sshCon, chans, reqs, err := ssh.NewServerConn(nConn, r.sshConfig)
 	if err != nil {
+		log.Print(err)
 		nConn.Close()
 		return
 	}
@@ -463,6 +464,7 @@ func NewRouter(director Director, keyPath string) *proxyRouter {
 		PublicKeyCallback: func(c ssh.ConnMetadata, pubKey ssh.PublicKey) (*ssh.Permissions, error) {
 			return nil, nil
 		},
+		NoClientAuth: true,
 	}
 	privateBytes, err := ioutil.ReadFile(keyPath)
 	if err != nil {

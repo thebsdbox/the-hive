@@ -310,7 +310,8 @@ func (d *docker) ContainerCreate(opts CreateContainerOpts) (err error) {
 		h.StorageOpt = map[string]string{"size": os.Getenv("STORAGE_SIZE")}
 	}
 
-	var pidsLimit = int64(1000)
+	// this needs massively increasing, otherwise just starting a Kubernets cluster breaches these limits
+	var pidsLimit = int64(100000)
 	if envLimit := os.Getenv("MAX_PROCESSES"); envLimit != "" {
 		if i, err := strconv.Atoi(envLimit); err == nil {
 			pidsLimit = int64(i)
@@ -328,7 +329,6 @@ func (d *docker) ContainerCreate(opts CreateContainerOpts) (err error) {
 	h.Resources.OomKillDisable = &t
 
 	env = append(env, fmt.Sprintf("PWD_HOST_FQDN=%s", opts.HostFQDN))
-	env = append(env, "DAN", "TEST")
 	cf := &container.Config{
 		Hostname:     opts.Hostname,
 		Image:        opts.Image,

@@ -54,6 +54,8 @@ type SessionSetupInstanceConf struct {
 	Hostname       string     `json:"hostname"`
 	IsSwarmManager bool       `json:"is_swarm_manager"`
 	IsSwarmWorker  bool       `json:"is_swarm_worker"`
+	IsKind         bool       `json:"is_Kind"`
+	ExposePorts    []int      `json:"exposePorts"`
 	Type           string     `json:"type"`
 	Run            [][]string `json:"run"`
 	Tls            bool       `json:"tls"`
@@ -316,22 +318,31 @@ func (p *pwd) SessionSetup(session *types.Session, sconf SessionSetupConf) error
 				}
 			}
 
-			for _, cmd := range conf.Run {
+			if len(conf.Run) != 0 {
 				errch := make(chan error)
-				go func() {
-					exitCode, err := p.InstanceExec(i, cmd)
-					fmt.Printf("Finished execuing command [%s] on instance %s with code [%d] and err [%v]\n", cmd, i.Name, exitCode, err)
 
-					if err != nil {
-						errch <- err
+				go func() {
+					fmt.Printf("executing [%d] commands\n", len(conf.Run))
+					for _, cmd := range conf.Run {
+						exitCode, err := p.InstanceExec(i, cmd)
+						fmt.Printf("command [%s] on instance %s with code [%d] and err [%v]\n", cmd, i.Name, exitCode, err)
+
+						if err != nil {
+							fmt.Printf("Command returned %v on instance %s", err, i.IP)
+							errch <- err
+						}
+						if exitCode != 0 {
+							fmt.Printf("Command returned %d on instance %s", exitCode, i.IP)
+							errch <- fmt.Errorf("Command returned %d on instance %s", exitCode, i.IP)
+						}
+
+						//
+						// ctx.Done() could be called if the errgroup is cancelled due to a previous error. In that case, return immediately
 					}
-					if exitCode != 0 {
-						errch <- fmt.Errorf("Command returned %d on instance %s", exitCode, i.IP)
-					}
+					// No errors so update the channel
+					fmt.Printf("completed all commands")
 					errch <- nil
 				}()
-
-				// ctx.Done() could be called if the errgroup is cancelled due to a previous error. In that case, return immediately
 				select {
 				case err = <-errch:
 					return err
@@ -339,6 +350,13 @@ func (p *pwd) SessionSetup(session *types.Session, sconf SessionSetupConf) error
 					return ctx.Err()
 				}
 			}
+
+			// if len(conf.ExposePorts != 0) {
+			// 	for _, port := range conf.ExposePorts {
+
+			// 	}
+			// }
+
 			return nil
 		})
 	}

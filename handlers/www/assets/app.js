@@ -9,6 +9,7 @@
     setTimeout(function() {
       document.getElementById("welcomeFormBypass").submit();
     }, 500);
+    
   }]);
 
   function SessionBuilderModalController($mdDialog, $scope) {
@@ -547,7 +548,8 @@
       }
     }
   }])
-  .config(['$mdIconProvider', '$locationProvider', '$mdThemingProvider', function($mdIconProvider, $locationProvider, $mdThemingProvider) {
+  .config(['$mdIconProvider', '$locationProvider', '$mdThemingProvider', '$compileProvider', function($mdIconProvider, $locationProvider, $mdThemingProvider, $compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ssh|ftp|mailto|chrome-extension):/);
     $locationProvider.html5Mode({enabled: true, requireBase: false});
     $mdIconProvider.defaultIconSet('../assets/social-icons.svg', 24);
     $mdThemingProvider.theme('kube')
@@ -555,7 +557,7 @@
       .accentPalette('grey');
   }])
   .component('settingsIcon', {
-    template : "<md-button class='md-mini' ng-click='$ctrl.onClick()'><md-icon class='material-icons'>settings</md-icon></md-button>",
+    template : "<md-button class='md-mini' ng-click='$ctrl.onClick()'><md-tooltip>Templates</md-tooltip><md-icon class='material-icons'>settings</md-icon></md-button>",
     controller : function($mdDialog) {
       var $ctrl = this;
       $ctrl.onClick = function() {
@@ -569,7 +571,7 @@
     }
   })
   .component('templatesIcon', {
-    template : "<md-button class='md-mini' ng-click='$ctrl.onClick()'><md-icon class='material-icons'>build</md-icon></md-button>",
+    template : "<md-button class='md-mini' ng-click='$ctrl.onClick()'><md-tooltip>Settings</md-tooltip><md-icon class='material-icons'>library_add</md-icon></md-button>",
     controller : function($mdDialog) {
       var $ctrl = this;
       $ctrl.onClick = function() {
@@ -649,42 +651,25 @@
   })
   .service("SessionService", function($http) {
 	var templates = [
-		{
-			title: '3 Managers and 2 Workers',
-			icon: '/assets/swarm.png',
-			setup: {
-				instances: [
-					{hostname: 'manager1', is_swarm_manager: true},
-					{hostname: 'manager2', is_swarm_manager: true},
-					{hostname: 'manager3', is_swarm_manager: true},
-					{hostname: 'worker1', is_swarm_worker: true},
-					{hostname: 'worker2', is_swarm_worker: true}
-				]
-			}
-		},
-		{
-			title: '5 Managers and no workers',
-			icon: '/assets/swarm.png',
-			setup: {
-				instances: [
-					{hostname: 'manager1', is_swarm_manager: true},
-					{hostname: 'manager2', is_swarm_manager: true},
-					{hostname: 'manager3', is_swarm_manager: true},
-					{hostname: 'manager4', is_swarm_manager: true},
-					{hostname: 'manager5', is_swarm_manager: true}
-				]
-			}
-		},
-		{
-                        title: '1 Manager and 1 Worker',
-                        icon: '/assets/swarm.png',
-                        setup: {
-                                instances: [
-                                        {hostname: 'manager1', is_swarm_manager: true},
-                                        {hostname: 'worker1', is_swarm_worker: true}
-                                ]
-                        }
-                }
+    {
+      title: "Kind Cluster          ->  ",
+      icon: '/assets/kind.png',
+      exposePorts: [8080],
+      setup: {
+        instances: [
+          {hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3']]}
+        ]
+      }
+    },
+    {
+      title: "Kind Cluster w/Cilium  -> ",
+      icon: '/assets/cilium.png',
+      setup: {
+        instances: [
+          {hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3'], ['sh','-c','cilium install']]}
+        ]
+      }
+    }
 	];
 
     return {
