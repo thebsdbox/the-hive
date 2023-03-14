@@ -4,6 +4,7 @@ services:
         container_name: haproxy
         image: haproxy
         ports:
+            - "80:8080"
             - "443:443"
         volumes:
             - ./haproxy:/usr/local/etc/haproxy
@@ -27,7 +28,7 @@ services:
         # use the latest golang image
         image: golang
         # go to the right place and starts the app
-        command: /bin/sh -c 'ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key >/dev/null; cd /go/src/router/l2; if [ -e /runbin/l2 ]; then /runbin/l2 -ssh_key_path /etc/ssh/ssh_host_rsa_key -name l2 -save /pwd/networks; else go run l2.go -ssh_key_path /etc/ssh/ssh_host_rsa_key -name l2 -save /pwd/networks; fi'
+        command: /bin/sh -c 'ssh-keygen -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key >/dev/null; cd /go/src/router/l2; if [ -e /runbin/l2 ]; then /runbin/l2 -ssh_key_path /etc/ssh/ssh_host_rsa_key -name l2 -save /pwd/networks; else go run l2.go -ssh_key_path /etc/ssh/ssh_host_rsa_key -name l2 -playground-domain the-hive.cloud -save /pwd/networks; fi'
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - $PWD:/go/src

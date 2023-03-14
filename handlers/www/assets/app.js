@@ -652,7 +652,7 @@
   .service("SessionService", function($http) {
 	var templates = [
     {
-      title: "Kind Cluster           ",
+      title: "Kind Cluster          ->  ",
       icon: '/assets/kind.png',
       exposePorts: [8080],
       setup: {
@@ -662,7 +662,7 @@
       }
     },
     {
-      title: "Kind Cluster w/Cilium  ",
+      title: "Kind Cluster w/Cilium  -> ",
       icon: '/assets/cilium.png',
       setup: {
         instances: [
