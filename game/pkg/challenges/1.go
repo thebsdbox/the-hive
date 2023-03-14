@@ -86,7 +86,7 @@ func (c *Challenge) Deploy(ctx context.Context) error {
 				},
 			},
 			Selector: map[string]string{
-				"app": "demo",
+				"app": "demos", // RUHROH
 			},
 		},
 	}
