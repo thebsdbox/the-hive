@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 func TestSessionPut(t *testing.T) {

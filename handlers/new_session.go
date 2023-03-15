@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thebsdbox/play-with-docker/config"
-	"github.com/thebsdbox/play-with-docker/provisioner"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/config"
+	"github.com/thebsdbox/the-hive/provisioner"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 type NewSessionResponse struct {

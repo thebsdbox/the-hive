@@ -13,8 +13,8 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
-	"github.com/thebsdbox/play-with-docker/config"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/config"
+	"github.com/thebsdbox/the-hive/pwd/types"
 	"google.golang.org/api/option"
 	"google.golang.org/api/people/v1"
 )

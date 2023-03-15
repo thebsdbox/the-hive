@@ -5,18 +5,18 @@ import (
 	"os"
 	"time"
 
-	"github.com/thebsdbox/play-with-docker/config"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/handlers"
-	"github.com/thebsdbox/play-with-docker/id"
-	"github.com/thebsdbox/play-with-docker/k8s"
-	"github.com/thebsdbox/play-with-docker/provisioner"
-	"github.com/thebsdbox/play-with-docker/pwd"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/scheduler"
-	"github.com/thebsdbox/play-with-docker/scheduler/task"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/config"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/handlers"
+	"github.com/thebsdbox/the-hive/id"
+	"github.com/thebsdbox/the-hive/k8s"
+	"github.com/thebsdbox/the-hive/provisioner"
+	"github.com/thebsdbox/the-hive/pwd"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/scheduler"
+	"github.com/thebsdbox/the-hive/scheduler/task"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("Cannot parse duration Got: %v", err)
 	}
 
-	playground := types.Playground{Domain: config.PlaygroundDomain, DefaultDinDInstanceImage: "thebsdbox/dind", AvailableDinDInstanceImages: []string{"thebsdbox/dind"}, AllowWindowsInstances: config.NoWindows, DefaultSessionDuration: d, Extras: map[string]interface{}{"LoginRedirect": "http://localhost:3000"}, Privileged: true}
+	playground := types.Playground{Domain: config.PlaygroundDomain, DefaultDinDInstanceImage: "thebsdbox/dind", AvailableDinDInstanceImages: []string{"thebsdbox/dind", "thebsdbox/dind:game"}, AllowWindowsInstances: config.NoWindows, DefaultSessionDuration: d, Extras: map[string]interface{}{"LoginRedirect": "http://localhost:3000"}, Privileged: true, MaxInstances: config.MaxInstances}
 	if _, err := core.PlaygroundNew(playground); err != nil {
 		log.Fatalf("Cannot create default playground. Got: %v", err)
 	}

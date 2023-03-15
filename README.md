@@ -11,7 +11,7 @@ We love docker and Kubernetes so much that we put docker in docker and kubernete
 
 ```bash
 # Clone this repo locally
-git clone https://github.com/thebsdbox/play-with-docker
+git clone https://github.com/thebsdbox/the-hive
 cd play-with-docker
 
 # Verify the Docker daemon is running

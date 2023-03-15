@@ -10,10 +10,10 @@ import (
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 type mockSessionProvider struct {

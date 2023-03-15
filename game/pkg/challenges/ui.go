@@ -22,9 +22,9 @@ func SelectChallenge() (*Challenge, error) {
 
 	flex.SetDirection(tview.FlexRow).
 		AddItem(tview.NewFlex().
-			AddItem(contactsList, 0, 1, true).
-			AddItem(contactText, 0, 4, false), 0, 6, false).
-		AddItem(text, 0, 1, false)
+			AddItem(contactsList, 0, 2, true).
+			AddItem(contactText, 0, 4, false), 0, 4, false).
+		AddItem(text, 0, 1, false).SetTitle(" The Hive ")
 
 	pages.AddPage("Menu", flex, true, true)
 
@@ -66,6 +66,6 @@ func SelectChallenge() (*Challenge, error) {
 
 func setSelection(contactText *tview.TextView, index int) {
 	contactText.Clear()
-	text := Challenges[index].Description + "\n " + "Time to complete:" + Challenges[index].AllowedTime.String()
+	text := Challenges[index].Description + "\n\n" + "Time to complete: " + Challenges[index].AllowedTime.String()
 	contactText.SetText(text)
 }

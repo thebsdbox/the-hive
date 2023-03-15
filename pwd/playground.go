@@ -3,9 +3,9 @@ package pwd
 import (
 	"log"
 
-	"github.com/satori/go.uuid"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	uuid "github.com/satori/go.uuid"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 func (p *pwd) PlaygroundNew(playground types.Playground) (*types.Playground, error) {

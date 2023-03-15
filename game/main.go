@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -27,13 +28,22 @@ import (
 // Timeout
 
 func main() {
+
+	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
 	// Set the scene
 	clearScreen()
-
+	MoveTo(5, 10)
+	// This is to allow localised testing
+	_, testing := os.LookupEnv("TEST")
+	if !testing {
+		os.Setenv("DOCKER_HOST", "tcp://localhost:2375")
+	}
 	// Wargames intro
 	slowStringPrint("Would you like to play a game?\n", time.Millisecond*50)
 	waitOnKey()
 	clearScreen()
+	MoveTo(5, 10)
 
 	//
 	slowStringPrint("We're playing one regardless...\n", time.Millisecond*50)
@@ -45,35 +55,51 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	logrus.Infof("Challenge [%s] selected", challenge.Name)
-	logrus.Infof("You will have [%s] to complete the challenge before the cluster will self destruct", challenge.AllowedTime.String())
 
 	// Create the cluster
-
-	//err = kind.CreateKind("falken")
-	err = k3d.CreateCluster("falken")
+	cluster, err := k3d.CreateCluster("falken")
 	if err != nil {
 		panic(err)
 	}
-	//defer kind.DeleteKind("falken")
+	defer k3d.DeleteCluser(ctx, cluster)
 
 	// Get kubernetes client
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
 	homeConfigPath := filepath.Join(os.Getenv("HOME"), ".kube", "config")
 	clientset, err := k8s.NewClientset(homeConfigPath, false, "")
 	if err != nil {
 		log.Fatalf("could not create k8s clientset from external file: %q: %v", homeConfigPath, err)
 	}
-	logrus.Debugf("Using external Kubernetes configuration from file [%s]", homeConfigPath)
 
 	// Give the challenge the Kubernetes GO client
-	challenge.SetK8sClient(clientset)
-	err = challenge.Deploy(ctx)
+	err = challenge.DeployFunc(ctx, clientset)
 	if err != nil {
 		panic(err)
 	}
 
+	logrus.Infof("Challenge [%s] selected", challenge.Name)
+	logrus.Infof("You will have [%s] to complete the challenge before the cluster will self destruct", challenge.AllowedTime.String())
+
+	// Deploy the readme file
+	err = challenge.CreateReadme()
+	if err != nil {
+		panic(err)
+	}
+
+	go func() {
+
+		// We ignore the errors (they're unlikely, but ultimate wont impact playing the game)
+		f, _ := os.Create("/tmp/counter")
+		defer f.Close()
+
+		t := time.Now().Add(challenge.AllowedTime)
+		for range time.Tick(1 * time.Second) {
+			f.Truncate(0) // Reduce the file to 0 bytes before re-writing the time remaining
+			y := t.Sub(time.Now())
+			f.WriteString(baseName(y.String()))
+			time.Sleep(time.Second)
+
+		}
+	}()
 	// Start the shell (blocking until timeout)
 	err = startShell(ctx, challenge.AllowedTime)
 	if err != nil {
@@ -81,13 +107,12 @@ func main() {
 	}
 
 	clearScreen()
+	MoveTo(5, 10)
+
 	slowStringPrint("That's all folks !\n", time.Millisecond*50)
-	waitOnKey()
+	time.Sleep(time.Second * 3)
 }
 
-func clearScreen() {
-	fmt.Print("\033[2J")
-}
 func waitOnKey() {
 	tty, err := tty.Open()
 	if err != nil {
@@ -101,7 +126,7 @@ func startShell(ctx context.Context, t time.Duration) error {
 	deadline := time.Now().Add(t)
 	ctx, cancelCtx := context.WithDeadline(ctx, deadline)
 	defer cancelCtx()
-	c := exec.CommandContext(ctx, "/bin/bash")
+	c := exec.CommandContext(ctx, "/bin/bash", "-l")
 
 	// Start the command with a pty.
 	ptmx, err := pty.Start(c)
@@ -146,4 +171,23 @@ func slowStringPrint(s string, t time.Duration) {
 		fmt.Printf("%c", rune)
 		time.Sleep(t)
 	}
+}
+
+func baseName(s string) string {
+	n := strings.LastIndexByte(s, '.')
+	if n == -1 {
+		return s
+	}
+	return s[:n]
+}
+
+// ClearScreen clears the screen.
+func clearScreen() {
+	fmt.Printf("\033[2J")
+	MoveTo(1, 1)
+}
+
+// MoveTo moves the cursor to (x, y).
+func MoveTo(x, y int) {
+	fmt.Printf("\033[%d;%df", y, x)
 }

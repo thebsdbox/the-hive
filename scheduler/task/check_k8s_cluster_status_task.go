@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/k8s"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/k8s"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 type checkK8sClusterStatusTask struct {
