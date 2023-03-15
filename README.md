@@ -12,7 +12,7 @@ We love docker and Kubernetes so much that we put docker in docker and kubernete
 ```bash
 # Clone this repo locally
 git clone https://github.com/thebsdbox/the-hive
-cd play-with-docker
+cd the-hive
 
 # Verify the Docker daemon is running
 docker run hello-world
@@ -25,13 +25,7 @@ sudo modprobe xt_ipvs
 docker swarm init
 
 # Get the latest franela/dind image
-docker pull franela/dind
-
-# Optional (with go1.14): pre-fetch module requirements into vendor
-# so that no network requests are required within the containers.
-# The module cache is retained in the pwd and l2 containers so the
-# download is a one-off if you omit this step.
-go mod vendor
+docker pull thebsdbox/dind
 
 # Start PWD as a container
 docker-compose up
@@ -42,9 +36,8 @@ to create a new session, followed by "ADD NEW INSTANCE" to launch a new terminal
 
 Notes:
 
-* There is a hard-coded limit of 5 Docker playgrounds per session. After 4 hours sessions are deleted.
 * If you want to override the DIND version or image then set the environmental variable i.e.
-  `DIND_IMAGE=franela/docker<version>-rc:dind`. Take into account that you can't use standard `dind` images, only [franela](https://hub.docker.com/r/franela/) ones work.
+  `DIND_IMAGE=thebsdbox/docker<version>-rc:dind`. Take into account that you can't use standard `dind` images, only [franela](https://hub.docker.com/r/franela/) ones work.
 
 ### Port forwarding
 
