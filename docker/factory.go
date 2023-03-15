@@ -11,8 +11,8 @@ import (
 	"github.com/docker/docker/api"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/tlsconfig"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/router"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/router"
 )
 
 type FactoryApi interface {

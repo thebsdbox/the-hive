@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/thebsdbox/play-with-docker/provisioner"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/provisioner"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 func NewInstance(rw http.ResponseWriter, req *http.Request) {
@@ -46,7 +46,7 @@ func NewInstance(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	if playground.MaxInstances > 0 && len(instances) >= playground.MaxInstances {
-		log.Println(err)
+		log.Printf("Reached maximum instances for user [%s]", playground.Id)
 		rw.WriteHeader(http.StatusConflict)
 		return
 	}

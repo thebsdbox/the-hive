@@ -21,7 +21,7 @@ import (
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
-	"github.com/thebsdbox/play-with-docker/config"
+	"github.com/thebsdbox/the-hive/config"
 )
 
 const (

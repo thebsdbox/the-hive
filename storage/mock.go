@@ -2,7 +2,7 @@ package storage
 
 import (
 	"github.com/stretchr/testify/mock"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 type Mock struct {

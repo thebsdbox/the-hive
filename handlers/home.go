@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/mux"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {

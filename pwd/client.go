@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 func (p *pwd) ClientNew(id string, session *types.Session) *types.Client {

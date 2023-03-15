@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/id"
-	"github.com/thebsdbox/play-with-docker/provisioner"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/id"
+	"github.com/thebsdbox/the-hive/provisioner"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 var (

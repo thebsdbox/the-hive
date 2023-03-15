@@ -3,6 +3,7 @@ package k3d
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/docker/go-connections/nat"
 	cliutil "github.com/k3d-io/k3d/v5/cmd/util"
+	l "github.com/k3d-io/k3d/v5/pkg/logger"
 	k3drt "github.com/k3d-io/k3d/v5/pkg/runtimes"
 	k3d "github.com/k3d-io/k3d/v5/pkg/types"
 	"github.com/sirupsen/logrus"
@@ -22,8 +24,13 @@ import (
 )
 
 func CreateCluster(name string) (*k3d.Cluster, error) {
+	l.Logger.SetLevel(logrus.ErrorLevel) // Disabling the additional output from cluster creation
 	ctx := context.TODO()
+	rand.Seed(time.Now().UnixNano())
 
+	serviceRange := fmt.Sprintf("10.%d.%d.0/17", rand.Intn(254), rand.Intn(127))
+	logrus.Info("🔧 creating your cluster, this should take around 60 seconds")
+	logrus.Infof("👨‍🔧 using unique service range [%s]", serviceRange)
 	c := &conf.SimpleConfig{
 		TypeMeta: types.TypeMeta{Kind: "Simple", APIVersion: "APIVersion:k3d.io/v1alpha4"},
 		ObjectMeta: types.ObjectMeta{
@@ -36,11 +43,15 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 			{
 				Port: "30000-30010:30000-30010",
 				NodeFilters: []string{
-					"server:0",
+					"server:0:direct",
 				},
 			},
 		},
 		Options: conf.SimpleConfigOptions{
+			K3dOptions: conf.SimpleConfigOptionsK3d{
+				Wait:                true,
+				DisableLoadbalancer: true,
+			},
 			K3sOptions: conf.SimpleConfigOptionsK3s{
 				ExtraArgs: []conf.K3sArgWithNodeFilters{
 					{
@@ -63,6 +74,12 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 					},
 					{
 						Arg: "--disable=servicelb",
+						NodeFilters: []string{
+							"server:0",
+						},
+					},
+					{
+						Arg: fmt.Sprintf("--service-cidr=%s", serviceRange),
 						NodeFilters: []string{
 							"server:0",
 						},
@@ -115,7 +132,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error processing/sanitizing simple config: %v", err)
 	}
-	logrus.Infof("===== Merged Cluster Config =====\n%+v\n===== ===== =====\n", clusterConfig)
+	logrus.Debugf("===== Merged Cluster Config =====\n%+v\n===== ===== =====\n", clusterConfig)
 
 	clusterConfig, err = config.ProcessClusterConfig(*clusterConfig)
 	if err != nil {
@@ -123,7 +140,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	}
 
 	if err := config.ValidateClusterConfig(ctx, runtimes.SelectedRuntime, *clusterConfig); err != nil {
-		return nil, fmt.Errorf("failed Cluster Configuration Validation: ", err)
+		return nil, fmt.Errorf("failed Cluster Configuration Validation: %v", err)
 	}
 
 	/**************************************
@@ -159,7 +176,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 
 	clusterConfig.KubeconfigOpts.SwitchCurrentContext = true
 
-	logrus.Infof("Updating default kubeconfig with a new context for cluster %s", clusterConfig.Cluster.Name)
+	logrus.Infof("Updating default kubeconfig 📄 with a new context for cluster %s", clusterConfig.Cluster.Name)
 	if _, err := k3dCluster.KubeconfigGetWrite(ctx, runtimes.SelectedRuntime, &clusterConfig.Cluster, "", &k3dCluster.WriteKubeConfigOptions{UpdateExisting: true, OverwriteExisting: true, UpdateCurrentContext: true}); err != nil {
 		logrus.Warningln(err)
 
@@ -187,7 +204,6 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		if err != nil {
 			return nil, err
 		}
-		time.Sleep(time.Second * 2)
 		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "-t", "cgroup2", "none", "/run/cilium/cgroupv2"})
 		if err != nil {
 			logrus.Error(err)
@@ -198,9 +214,9 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		}
 	}
 
-	logrus.Infof("🧑‍💻 installing Cilium with Kubernets host")
-	cmd := exec.Command("cilium", "install",
-		"--helm-set", "kubeProxyReplacement=strict")
+	logrus.Infof("🧑‍💻  installing Cilium with Kubernets host")
+	cmd := exec.Command("cilium", "install") //,
+	//"--helm-set", "kubeProxyReplacement=strict")
 	if _, err := cmd.CombinedOutput(); err != nil {
 		return nil, err
 	}

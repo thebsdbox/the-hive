@@ -18,8 +18,8 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/load"
-	"github.com/thebsdbox/play-with-docker/config"
-	"github.com/thebsdbox/play-with-docker/router"
+	"github.com/thebsdbox/the-hive/config"
+	"github.com/thebsdbox/the-hive/router"
 	"github.com/urfave/negroni"
 )
 

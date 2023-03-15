@@ -44,9 +44,9 @@ RUN mkdir -p /var/run/pwd/certs && mkdir -p /var/run/pwd/uploads \
     && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 # Install kind
-RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 \
-    && chmod +x ./kind \
-    && sudo mv ./kind /usr/local/bin/kind
+#RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 \
+#    && chmod +x ./kind \
+#    && sudo mv ./kind /usr/local/bin/kind
 
 # Install kubectl
 RUN curl -Lo ./kubectl https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl \
@@ -62,7 +62,10 @@ RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master
     && chmod +x get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
 
 ## Get Kind configuration
-RUN curl -L https://docs.cilium.io/en/v1.13/_downloads/5d189e574ddd393eb1bcf12c6937ce0f/kind-config.yaml > kind.yaml
+#RUN curl -L https://docs.cilium.io/en/v1.13/_downloads/5d189e574ddd393eb1bcf12c6937ce0f/kind-config.yaml > kind.yaml
+
+COPY ["game", "/usr/local/bin"]
+
 
 # Remove IPv6 alias for localhost and start docker in the background ...
 CMD cat /etc/hosts >/etc/hosts.bak && \
@@ -73,8 +76,11 @@ CMD cat /etc/hosts >/etc/hosts.bak && \
     sed -i "s/\DOCKER_TLSCERT/$DOCKER_TLSCERT/" /etc/docker/daemon.json && \
     sed -i "s/\DOCKER_TLSKEY/$DOCKER_TLSKEY/" /etc/docker/daemon.json && \
     mount -t securityfs none /sys/kernel/security && \
+    mkdir /root/.kube/ && \
     echo "root:root" | chpasswd &> /dev/null && \
+    echo "Match user root" >> /etc/ssh/sshd_config &&\
+    echo "    ForceCommand /usr/local/bin/game" >> /etc/ssh/sshd_config &&\
     /usr/sbin/sshd -o PermitRootLogin=yes -o PrintMotd=no 2>/dev/null && \
     dockerd &>/docker.log & \
-    while true ; do script -q -c "/bin/bash -l" /dev/null ; done
+    while true ; do script -q -c "/usr/local/bin/game" /dev/null ; done
 # ... and then put a shell in the foreground, restarting it if it exits

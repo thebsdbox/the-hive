@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/thebsdbox/play-with-docker/config"
+	"github.com/thebsdbox/the-hive/config"
 )
 
 type CookieID struct {

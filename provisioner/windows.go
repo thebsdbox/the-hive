@@ -17,10 +17,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/router"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/router"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 var asgService *autoscaling.AutoScaling
