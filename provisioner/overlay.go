@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	dtypes "github.com/docker/docker/api/types"
-	"github.com/thebsdbox/play-with-docker/config"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/config"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 type overlaySessionProvisioner struct {

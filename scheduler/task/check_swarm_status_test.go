@@ -7,9 +7,9 @@ import (
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/stretchr/testify/assert"
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 func TestCheckSwarmStatus_Name(t *testing.T) {

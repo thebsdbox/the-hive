@@ -9,9 +9,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/satori/go.uuid"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/storage"
+	uuid "github.com/satori/go.uuid"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 var upgrader = websocket.Upgrader{

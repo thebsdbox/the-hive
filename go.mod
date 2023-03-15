@@ -1,8 +1,8 @@
-module github.com/thebsdbox/play-with-docker
+module github.com/thebsdbox/the-hive
 
 go 1.19
 
-require github.com/thebsdbox/play-with-docker v0.0.3-0.20230302045008-ed82247c9ab7
+//require github.com/thebsdbox/the-hive v0.0.3-0.20230302045008-ed82247c9ab7
 
 require (
 	cloud.google.com/go v0.58.0 // indirect
@@ -91,4 +91,4 @@ require (
 	k8s.io/kube-openapi v0.0.0-20171101183504-39a7bf85c140 // indirect
 )
 
-replace github.com/thebsdbox/play-with-docker => /home/dan/go/src/github.com/thebsdbox/play-with-docker
+//replace github.com/thebsdbox/the-hive => /home/dan/go/src/github.com/thebsdbox/the-hive

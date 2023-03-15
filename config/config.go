@@ -33,6 +33,7 @@ var (
 	ForceTLS                                                                                                                                                     bool
 	SecureCookie                                                                                                                                                 *securecookie.SecureCookie
 	AdminToken                                                                                                                                                   string
+	MaxInstances                                                                                                                                                 int
 )
 
 // Unsafe enables a number of unsafe features when set. It is principally
@@ -70,6 +71,7 @@ func ParseFlags() {
 
 	flag.StringVar(&SegmentId, "segment-id", "", "Segment id to post metrics")
 	flag.StringVar(&PlaygroundLifetime, "playground-lifetime", "4h", "How long the playground will exist for each user")
+	flag.IntVar(&MaxInstances, "max-instances", 2, "The maximum number of instances that can be created per user")
 
 	flag.BoolVar(&Unsafe, "unsafe", os.Getenv("PWD_UNSAFE") == "true", "Operate in unsafe mode")
 

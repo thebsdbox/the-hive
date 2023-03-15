@@ -5,7 +5,7 @@ import "time"
 var test = Challenge{
 	Name:        "This challenge is a test",
 	Description: "As in a LITERAL test",
-	AllowedTime: 20 * time.Second,
+	AllowedTime: 1 * time.Hour,
 }
 
 func init() {

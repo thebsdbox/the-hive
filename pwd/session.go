@@ -13,9 +13,9 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/thebsdbox/play-with-docker/docker"
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/docker"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 var preparedSessions = map[string]bool{}

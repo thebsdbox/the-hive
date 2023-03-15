@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/thebsdbox/play-with-docker/event"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/event"
+	"github.com/thebsdbox/the-hive/pwd/types"
 
 	"golang.org/x/text/encoding"
 )

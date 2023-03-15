@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thebsdbox/play-with-docker/router"
+	"github.com/thebsdbox/the-hive/router"
 )
 
 func TestDirector(t *testing.T) {

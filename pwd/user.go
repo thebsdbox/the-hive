@@ -3,8 +3,8 @@ package pwd
 import (
 	"errors"
 
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 var userBannedError = errors.New("User is banned")

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/docker/docker/client"
-	"github.com/thebsdbox/play-with-docker/pwd/types"
-	"github.com/thebsdbox/play-with-docker/storage"
+	"github.com/thebsdbox/the-hive/pwd/types"
+	"github.com/thebsdbox/the-hive/storage"
 )
 
 type localCachedFactory struct {

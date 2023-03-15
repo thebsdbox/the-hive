@@ -3,7 +3,7 @@ package storage
 import (
 	"errors"
 
-	"github.com/thebsdbox/play-with-docker/pwd/types"
+	"github.com/thebsdbox/the-hive/pwd/types"
 )
 
 var NotFoundError = errors.New("NotFound")
