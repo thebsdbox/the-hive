@@ -657,7 +657,7 @@
       exposePorts: [8080],
       setup: {
         instances: [
-          {hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3']]}
+          {image: "thebsdbox/dind", hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3']]}
         ]
       }
     },
@@ -666,7 +666,7 @@
       icon: '/assets/cilium.png',
       setup: {
         instances: [
-          {hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3'], ['sh','-c','cilium install']]}
+          {image: "thebsdbox/dind", hostname: 'kind', run: [['sleep','5'],['sh','-c','kind create cluster --image the-hive.cloud:5000/kindest/node:v1.25.3'], ['sh','-c','cilium install']]}
         ]
       }
     }

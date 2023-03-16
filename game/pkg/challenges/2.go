@@ -17,11 +17,30 @@ var challenge2 = Challenge{
 	AllowedTime: 4 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
+		_, err := clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, configMap, v1.CreateOptions{})
+		if err != nil {
+			return err
+		}
+
 		replicas := int32(2)
 		deployment.Spec.Replicas = &replicas
+
+		// RuhRoh
+		deployment.Spec.Template.Spec.Containers[0].ReadinessProbe = &apiv1.Probe{
+			ProbeHandler: apiv1.ProbeHandler{
+				HTTPGet: &apiv1.HTTPGetAction{
+					Scheme: apiv1.URISchemeHTTP,
+					Path:   "/index.html",
+					Port:   intstr.FromInt(8080),
+				},
+			},
+			InitialDelaySeconds: 5,
+			PeriodSeconds:       5,
+		}
+
 		deploymentsClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
-		_, err := deploymentsClient.Create(ctx, deployment, v1.CreateOptions{})
+		_, err = deploymentsClient.Create(ctx, deployment, v1.CreateOptions{})
 		if err != nil {
 			return err
 		}
@@ -56,6 +75,12 @@ var challenge2 = Challenge{
 		return nil
 
 	},
+	Readme: `
+Welcome to "The Hive"
+--------------------------------
+	
+	
+		`,
 }
 
 func init() {
