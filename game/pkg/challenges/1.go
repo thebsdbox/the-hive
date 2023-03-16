@@ -11,6 +11,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// Details
+
 var challenge1 = Challenge{
 	Name:        "The labels one 🏷️ ",
 	Description: "For some reason the NodePort isn't working  ¯\\_(ツ)_/¯",
@@ -63,8 +65,12 @@ var challenge1 = Challenge{
 
 	},
 	Readme: `
-	Welcome to "The Hive"
-	--------------------------------
+Welcome to "The Hive"
+--------------------------------
+
+Enable hubble (optional)
+-------------
+cilium hubble enable
 
 
 	`,

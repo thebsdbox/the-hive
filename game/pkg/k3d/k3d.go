@@ -37,7 +37,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 			Name: name,
 		},
 		Servers: 1,
-		Agents:  3,
+		Agents:  2,
 		Image:   "docker.io/rancher/k3s:v1.25.6-k3s1",
 		Ports: []conf.PortWithNodeFilters{
 			{
@@ -74,6 +74,12 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 					},
 					{
 						Arg: "--disable=servicelb",
+						NodeFilters: []string{
+							"server:0",
+						},
+					},
+					{
+						Arg: "--disable=metrics-server",
 						NodeFilters: []string{
 							"server:0",
 						},
@@ -161,7 +167,6 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	//if err := k3dCluster.ClusterCreate(cmd.Context(), runtimes.SelectedRuntime, &clusterConfig.Cluster, &clusterConfig.ClusterCreateOpts); err != nil {
 	if err := k3dCluster.ClusterRun(ctx, runtimes.SelectedRuntime, clusterConfig); err != nil {
 		// rollback if creation failed
-		//l.Log().Errorln(err)
 		if c.Options.K3dOptions.NoRollback { // TODO: move rollback mechanics to pkg/
 			return nil, fmt.Errorf("cluster creation FAILED, rollback deactivated [%v]", err)
 		}
@@ -183,7 +188,6 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	}
 
 	// Post cluster fixing of eBPF and cgroupsv2 (otherwise cilium will hang)
-	logrus.Info("Adding eBPF 🐝 and 📂 cgroupv2 to nodes")
 	nodes, err := k3dCluster.NodeList(ctx, runtimes.SelectedRuntime)
 	if err != nil {
 		return nil, err
@@ -192,6 +196,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		if strings.HasSuffix(node.Name, "lb") {
 			continue
 		}
+		logrus.Infof("adding eBPF 🐝  and 📂  cgroupv2 to %s", node.Name)
 		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "bpffs", "-t", "bpf", "/sys/fs/bpf"})
 		if err != nil {
 			return nil, err
@@ -214,9 +219,11 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		}
 	}
 
-	logrus.Infof("🧑‍💻  installing Cilium with Kubernets host")
-	cmd := exec.Command("cilium", "install") //,
-	//"--helm-set", "kubeProxyReplacement=strict")
+	logrus.Infof("🧑‍💻  installing Cilium")
+	cmd := exec.Command("cilium", "install", //,
+		"--helm-set", "hubble.relay.enabled=true",
+		"--helm-set", "hubble.ui.enabled=true",
+		"--helm-set", "kubeProxyReplacement=strict")
 	if _, err := cmd.CombinedOutput(); err != nil {
 		return nil, err
 	}

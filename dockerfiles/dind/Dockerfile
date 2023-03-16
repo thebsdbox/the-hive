@@ -64,6 +64,10 @@ RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master
 ## Get Kind configuration
 #RUN curl -L https://docs.cilium.io/en/v1.13/_downloads/5d189e574ddd393eb1bcf12c6937ce0f/kind-config.yaml > kind.yaml
 
+# Install Hubble
+RUN curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/download/v0.11.2/hubble-linux-amd64.tar.gz \
+    && tar xzv -f hubble-linux-amd64.tar.gz -C /usr/local/bin && rm hubble-linux-amd64.tar.gz
+
 COPY ["game", "/usr/local/bin"]
 
 
