@@ -83,7 +83,10 @@ func main() {
 	err = challenge.CreateReadme()
 	if err != nil {
 		panic(err)
+	} else {
+		logrus.Info("A Readme.txt has been written to your home directory .. it might contain clues (or not)")
 	}
+	fmt.Printf("\n\n") // Leave clear seperation between the builder output and the new terminal
 
 	go func() {
 
@@ -100,6 +103,10 @@ func main() {
 
 		}
 	}()
+
+	// This should never occur, but things dont always happen the way you'd expect them to.
+	time.AfterFunc(challenge.AllowedTime+time.Minute, func() { panic("Odd") })
+
 	// Start the shell (blocking until timeout)
 	err = startShell(ctx, challenge.AllowedTime)
 	if err != nil {
@@ -110,7 +117,7 @@ func main() {
 	MoveTo(5, 10)
 
 	slowStringPrint("That's all folks !\n", time.Millisecond*50)
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 2)
 }
 
 func waitOnKey() {

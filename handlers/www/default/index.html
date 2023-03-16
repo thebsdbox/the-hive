@@ -48,6 +48,10 @@
                   <md-button class="md-warn md-raised" ng-click="closeSession()">Close session</md-button>
                   <div class="md-toolbar-tools">
                     <h1 class="md-toolbar-tools">Instances</h1>
+                    <md-button ng-click="newInstance()" ng-disabled="isInstanceBeingCreated" class="md-mini">
+                        <md-icon class="material-icons">add</md-icon>
+                    </md-button> 
+                    <instances-icon></instances-icon>
                     <templates-icon></templates-icon>
                     <settings-icon></settings-icon><br/>
                   </div>
@@ -58,7 +62,7 @@
                   </div>
                 </md-toolbar>
                 <md-content layout-padding>
-                  <md-button ng-click="newInstance()" ng-disabled="isInstanceBeingCreated" class="md-primary">{{newInstanceBtnText}}</md-button>
+                  <!--<md-button ng-click="newInstance()" ng-disabled="isInstanceBeingCreated" class="md-primary">{{newInstanceBtnText}}</md-button> -->
               <md-list class="md-dense" flex>
                 <md-list-item ng-switch on="instance.isManager || instance.isK8sManager" class="md-2-line" ng-repeat="instance in instances | orderBy:'hostname'" ng-click="showInstance(instance)" ng-class="instance.name == selectedInstance.name ? 'selected' : false">
                     <md-icon ng-switch-when="true" style="color: blue" md-svg-icon="person"></md-icon>
@@ -83,11 +87,13 @@
               </md-content>
               <md-content flex layout="column" ng-repeat="instance in instances" ng-show="instance.name == selectedInstance.name" ngf-drop class="drop-box" ngf-drag-over-class="'dragover'" ngf-max-size="100000000" ngf-change="uploadFiles($files, $invalidFiles)" ngf-multiple="true">
                   <md-card class="stats" md-theme="default" md-theme-watch>
+                      <!-- Removed the title as it was big and unrequired
                       <md-card-title>
                           <md-card-title-text>
                               <span class="md-headline">{{instance.name}}</span>
                           </md-card-title-text>
                       </md-card-title>
+                      -->
                       <md-card-content>
                           <div layout-gt-sm="row">
                              <md-input-container class="md-icon-float md-block">
@@ -97,6 +103,10 @@
                              <md-button class="md-raised" ng-click="openPort(instance)">
                                 Open Port
                              </md-button>
+                             <md-button class="md-raised" href="http://{{instance.proxy_host}}-30000.direct.{{host}}" target="_blank" rel="noopener noreferrer">
+                                <md-icon class="material-icons">hive</md-icon>
+                                Solve the Hive Quiz
+                            </md-button>
                              <md-chips ng-model="instance.ports" name="port" readonly="true" md-removable="false">
                                <md-chip-template> 
                                <strong><a href="{{getProxyUrl(instance, $chip)}}" title="{{getProxyUrl(instance, $chip)}}" target="_blank">{{$chip}}</a></strong>
@@ -108,6 +118,7 @@
                                </md-chip-template>
                              </md-chips>
                           </div>
+                        <!-- Removed the row about system monitoring
                           <div layout-gt-sm="row">
                              <md-input-container class="md-block" flex-gt-sm>
                                <label>Memory</label>
@@ -118,6 +129,7 @@
                                <input ng-model="instance.cpu" type="text" readonly="readonly">
                              </md-input-container>
                           </div>
+                        -->
                           <div layout-gt-sm="row">
                              <md-input-container>
                                <label>SSH</label>
@@ -125,13 +137,13 @@
                                <md-icon ngclipboard data-clipboard-text="ssh {{instance.proxy_host}}@direct.{{host}} -p 8022"class="material-icons">content_copy
                                     <md-tooltip md-direction="top">Copy!</md-tooltip>
                                </md-icon>
+                            </md-input-container>
                                <md-button class="md-raised" href="ssh://{{instance.proxy_host}}@direct.{{host}}:8022" target="_blank" rel="noopener noreferrer">
                                   <md-icon class="material-icons">login</md-icon> SSH
                                 </md-button>
                                 <md-button class="md-raised" href="http://{{instance.proxy_host}}-8443.direct.{{host}}" target="_blank" rel="noopener noreferrer">
                                     <md-icon class="material-icons">code</md-icon> VSCode
-                                  </md-button>
-                             </md-input-container>
+                                </md-button>
                              <div class="md-block" glex-gt-sm></div>
                           </div>
                       </md-card-content>
