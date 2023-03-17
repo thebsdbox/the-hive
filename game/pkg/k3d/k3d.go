@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -220,13 +221,27 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	}
 
 	logrus.Infof("🧑‍💻  installing Cilium")
-	cmd := exec.Command("cilium", "install", //,
-		"--helm-set", "hubble.relay.enabled=true",
-		"--helm-set", "hubble.ui.enabled=true",
-		"--helm-set", "kubeProxyReplacement=strict")
-	if _, err := cmd.CombinedOutput(); err != nil {
+
+	cmd := exec.CommandContext(ctx, "kubectl", append([]string{"create", "-f", "-"})...)
+
+	// Pass through our environment
+	cmd.Env = os.Environ()
+	// Pass through our std{out,err} and make our resolved buffer stdin.
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = strings.NewReader(cilium)
+	err = cmd.Run()
+	if err != nil {
 		return nil, err
 	}
+	// cmd := exec.Command("cilium", "install", //,
+	// 	"--helm-set", "hubble.relay.enabled=true",
+	// 	"--helm-set", "hubble.ui.enabled=true",
+	// 	"--helm-set", "kubeProxyReplacement=strict",
+	// 	"--helm-set", "hubble.enabled=true")
+	// if _, err := cmd.CombinedOutput(); err != nil {
+	// 	return nil, err
+	// }
 
 	return &clusterConfig.Cluster, nil
 }
