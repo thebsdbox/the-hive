@@ -83,7 +83,10 @@ var challenge4 = Challenge{
 	Readme: `
 Welcome to "The Hive"
 --------------------------------
-	
+
+Enable hubble (optional)
+-------------
+kubectl expose -n kube-system deploy hubble-ui --type=NodePort --name hubble-node
 	
 		`,
 }
