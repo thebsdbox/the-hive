@@ -70,10 +70,8 @@ Welcome to "The Hive"
 
 Enable hubble (optional)
 -------------
-cilium hubble enable
-
-
-	`,
+kubectl expose -n kube-system deploy hubble-ui --type=NodePort --name hubble-node
+`,
 }
 
 func init() {
