@@ -11,10 +11,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var challenge3 = Challenge{
-	Name:        "Not on target (port)🎯",
-	Description: "Something doesn't match up  ¯\\_(ツ)_/¯",
-	AllowedTime: 4 * time.Minute,
+var challenge8 = Challenge{
+	Name:        "Too affinity and Beyond! 🚀",
+	Description: "¯\\_(ツ)_/¯",
+	AllowedTime: 2 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
 		_, err := clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, configMap, v1.CreateOptions{})
@@ -24,6 +24,18 @@ var challenge3 = Challenge{
 
 		replicas := int32(2)
 		deployment.Spec.Replicas = &replicas
+
+		deployment.Spec.Template.Spec.Affinity = &apiv1.Affinity{
+			NodeAffinity: &apiv1.NodeAffinity{
+				RequiredDuringSchedulingIgnoredDuringExecution: &apiv1.NodeSelector{
+					NodeSelectorTerms: []apiv1.NodeSelectorTerm{{
+						MatchExpressions: []apiv1.NodeSelectorRequirement{
+							{Key: "Buzz", Operator: apiv1.NodeSelectorOpExists},
+						},
+					}},
+				},
+			},
+		}
 		deploymentsClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 		_, err = deploymentsClient.Create(ctx, deployment, v1.CreateOptions{})
@@ -42,7 +54,7 @@ var challenge3 = Challenge{
 				Ports: []apiv1.ServicePort{
 					{
 						Name:       "web",
-						TargetPort: intstr.FromInt(81),
+						TargetPort: intstr.FromInt(80),
 						Port:       80,
 						Protocol:   "TCP",
 						NodePort:   30000,
@@ -70,5 +82,5 @@ Welcome to "The Hive"
 }
 
 func init() {
-	Challenges = append(Challenges, challenge3)
+	Challenges = append(Challenges, challenge8)
 }

@@ -12,8 +12,8 @@ import (
 )
 
 var challenge5 = Challenge{
-	Name:        "TBD ❓",
-	Description: "This could be your opportunity ¯\\_(ツ)_/¯",
+	Name:        "Image 💥",
+	Description: "¯\\_(ツ)_/¯",
 	AllowedTime: 4 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
@@ -24,6 +24,7 @@ var challenge5 = Challenge{
 
 		replicas := int32(2)
 		deployment.Spec.Replicas = &replicas
+		deployment.Spec.Template.Spec.Containers[0].Image = "nginx:1.12-nope"
 		deploymentsClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 		_, err = deploymentsClient.Create(ctx, deployment, v1.CreateOptions{})
