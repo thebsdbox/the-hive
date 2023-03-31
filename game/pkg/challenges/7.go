@@ -11,10 +11,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var challenge3 = Challenge{
-	Name:        "Not on target (port)🎯",
-	Description: "Something doesn't match up  ¯\\_(ツ)_/¯",
-	AllowedTime: 4 * time.Minute,
+var challenge7 = Challenge{
+	Name:        "More copies 👯 required",
+	Description: "¯\\_(ツ)_/¯",
+	AllowedTime: 2 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
 		_, err := clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, configMap, v1.CreateOptions{})
@@ -22,7 +22,7 @@ var challenge3 = Challenge{
 			return err
 		}
 
-		replicas := int32(2)
+		replicas := int32(0)
 		deployment.Spec.Replicas = &replicas
 		deploymentsClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
@@ -42,7 +42,7 @@ var challenge3 = Challenge{
 				Ports: []apiv1.ServicePort{
 					{
 						Name:       "web",
-						TargetPort: intstr.FromInt(81),
+						TargetPort: intstr.FromInt(80),
 						Port:       80,
 						Protocol:   "TCP",
 						NodePort:   30000,
@@ -70,5 +70,5 @@ Welcome to "The Hive"
 }
 
 func init() {
-	Challenges = append(Challenges, challenge3)
+	Challenges = append(Challenges, challenge7)
 }

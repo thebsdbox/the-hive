@@ -11,9 +11,9 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var challenge3 = Challenge{
-	Name:        "Not on target (port)🎯",
-	Description: "Something doesn't match up  ¯\\_(ツ)_/¯",
+var challengeTemplate = Challenge{
+	Name:        "TBD ❓",
+	Description: "This could be your opportunity ¯\\_(ツ)_/¯",
 	AllowedTime: 4 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
@@ -42,7 +42,7 @@ var challenge3 = Challenge{
 				Ports: []apiv1.ServicePort{
 					{
 						Name:       "web",
-						TargetPort: intstr.FromInt(81),
+						TargetPort: intstr.FromInt(80),
 						Port:       80,
 						Protocol:   "TCP",
 						NodePort:   30000,
@@ -70,5 +70,5 @@ Welcome to "The Hive"
 }
 
 func init() {
-	Challenges = append(Challenges, challenge3)
+	Challenges = append(Challenges, challengeTemplate)
 }
