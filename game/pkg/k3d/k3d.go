@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/docker/go-connections/nat"
@@ -39,7 +40,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		},
 		Servers: 1,
 		Agents:  2,
-		Image:   "docker.io/rancher/k3s:v1.25.6-k3s1",
+		Image:   "the-hive.cloud:5000/rancher/k3s:v1.25.6-k3s1",
 		Ports: []conf.PortWithNodeFilters{
 			{
 				Port: "30000-30010:30000-30010",
@@ -193,31 +194,42 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	if err != nil {
 		return nil, err
 	}
+	var wg sync.WaitGroup
+	var execErr error
+
 	for _, node := range nodes {
 		if strings.HasSuffix(node.Name, "lb") {
 			continue
 		}
 		logrus.Infof("adding eBPF 🐝  and 📂  cgroupv2 to %s", node.Name)
-		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "bpffs", "-t", "bpf", "/sys/fs/bpf"})
-		if err != nil {
-			return nil, err
-		}
-		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/sys/fs/bpf"})
-		if err != nil {
-			return nil, err
-		}
-		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mkdir", "-p", "/run/cilium/cgroupv2"})
-		if err != nil {
-			return nil, err
-		}
-		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "-t", "cgroup2", "none", "/run/cilium/cgroupv2"})
-		if err != nil {
-			logrus.Error(err)
-		}
-		err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/run/cilium/cgroupv2"})
-		if err != nil {
-			return nil, err
-		}
+		wg.Add(1)
+
+		go func(node *k3d.Node) {
+			defer wg.Done()
+
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "bpffs", "-t", "bpf", "/sys/fs/bpf"})
+			if err != nil {
+				execErr = err
+			}
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/sys/fs/bpf"})
+			if err != nil {
+				execErr = err
+			}
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mkdir", "-p", "/run/cilium/cgroupv2"})
+			if err != nil {
+				execErr = err
+			}
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "-t", "cgroup2", "none", "/run/cilium/cgroupv2"})
+			if err != nil {
+				execErr = err
+			}
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/run/cilium/cgroupv2"})
+		}(node)
+
+	}
+	wg.Wait()
+	if execErr != nil {
+		return nil, execErr
 	}
 
 	logrus.Infof("🧑‍💻  installing Cilium")
@@ -228,8 +240,23 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	cmd.Env = os.Environ()
 	// Pass through our std{out,err} and make our resolved buffer stdin.
 	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
+	//cmd.Stdout = os.Stdout
 	cmd.Stdin = strings.NewReader(cilium)
+	err = cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	logrus.Infof("🧑‍💻  installing Tetragon")
+
+	cmd = exec.CommandContext(ctx, "kubectl", append([]string{"create", "-f", "-"})...)
+
+	// Pass through our environment
+	cmd.Env = os.Environ()
+	// Pass through our std{out,err} and make our resolved buffer stdin.
+	cmd.Stderr = os.Stderr
+	//cmd.Stdout = os.Stdout
+	cmd.Stdin = strings.NewReader(tetragon)
 	err = cmd.Run()
 	if err != nil {
 		return nil, err

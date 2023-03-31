@@ -5,15 +5,16 @@ import (
 	"time"
 
 	apiv1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 )
 
-var challenge3 = Challenge{
-	Name:        "Not on target (port)🎯",
-	Description: "Something doesn't match up  ¯\\_(ツ)_/¯",
+var challenge6 = Challenge{
+	Name:        "A problem with the 🧠",
+	Description: "¯\\_(ツ)_/¯",
 	AllowedTime: 4 * time.Minute,
 	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
@@ -24,6 +25,11 @@ var challenge3 = Challenge{
 
 		replicas := int32(2)
 		deployment.Spec.Replicas = &replicas
+		deployment.Spec.Template.Spec.Containers[0].Resources = apiv1.ResourceRequirements{
+			Limits: apiv1.ResourceList{
+				"memory": resource.MustParse("1Mi"),
+			},
+		}
 		deploymentsClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 		_, err = deploymentsClient.Create(ctx, deployment, v1.CreateOptions{})
@@ -42,7 +48,7 @@ var challenge3 = Challenge{
 				Ports: []apiv1.ServicePort{
 					{
 						Name:       "web",
-						TargetPort: intstr.FromInt(81),
+						TargetPort: intstr.FromInt(80),
 						Port:       80,
 						Protocol:   "TCP",
 						NodePort:   30000,
@@ -70,5 +76,5 @@ Welcome to "The Hive"
 }
 
 func init() {
-	Challenges = append(Challenges, challenge3)
+	Challenges = append(Challenges, challenge6)
 }
