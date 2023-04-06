@@ -69,7 +69,7 @@ RUN curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/d
     && tar xzv -f hubble-linux-amd64.tar.gz -C /usr/local/bin && rm hubble-linux-amd64.tar.gz
 
 COPY ["game", "/usr/local/bin"]
-
+COPY ["hubble.yaml", "tetragon.yaml", "./root/"]
 
 # Remove IPv6 alias for localhost and start docker in the background ...
 CMD cat /etc/hosts >/etc/hosts.bak && \

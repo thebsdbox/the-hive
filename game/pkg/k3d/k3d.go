@@ -247,20 +247,20 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 		return nil, err
 	}
 
-	logrus.Infof("🧑‍💻  installing Tetragon")
+	// logrus.Infof("🧑‍💻  installing Tetragon")
 
-	cmd = exec.CommandContext(ctx, "kubectl", append([]string{"create", "-f", "-"})...)
+	// cmd = exec.CommandContext(ctx, "kubectl", append([]string{"create", "-f", "-"})...)
 
-	// Pass through our environment
-	cmd.Env = os.Environ()
-	// Pass through our std{out,err} and make our resolved buffer stdin.
-	cmd.Stderr = os.Stderr
-	//cmd.Stdout = os.Stdout
-	cmd.Stdin = strings.NewReader(tetragon)
-	err = cmd.Run()
-	if err != nil {
-		return nil, err
-	}
+	// // Pass through our environment
+	// cmd.Env = os.Environ()
+	// // Pass through our std{out,err} and make our resolved buffer stdin.
+	// cmd.Stderr = os.Stderr
+	// //cmd.Stdout = os.Stdout
+	// cmd.Stdin = strings.NewReader(tetragon)
+	// err = cmd.Run()
+	// if err != nil {
+	// 	return nil, err
+	// }
 	// cmd := exec.Command("cilium", "install", //,
 	// 	"--helm-set", "hubble.relay.enabled=true",
 	// 	"--helm-set", "hubble.ui.enabled=true",
@@ -273,7 +273,8 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	return &clusterConfig.Cluster, nil
 }
 
-func DeleteCluser(ctx context.Context, cluster *k3d.Cluster) error {
+// DeleteCluster will remove the existing cluster, based upon the cluster configuration
+func DeleteCluster(ctx context.Context, cluster *k3d.Cluster) error {
 	logrus.Info("🧽 deleting K3D cluster")
 	if err := k3dCluster.ClusterDelete(ctx, runtimes.SelectedRuntime, cluster, k3d.ClusterDeleteOpts{SkipRegistryCheck: true}); err != nil {
 		return fmt.Errorf("Cluster creation FAILED, also FAILED to rollback changes [%v]", err)
