@@ -56,12 +56,14 @@ func main() {
 		panic(err)
 	}
 
-	// Create the cluster
-	cluster, err := k3d.CreateCluster("falken")
-	if err != nil {
-		panic(err)
+	if !testing {
+		// Create the cluster
+		cluster, err := k3d.CreateCluster("falken")
+		if err != nil {
+			panic(err)
+		}
+		defer k3d.DeleteCluster(ctx, cluster)
 	}
-	defer k3d.DeleteCluser(ctx, cluster)
 
 	// Get kubernetes client
 	homeConfigPath := filepath.Join(os.Getenv("HOME"), ".kube", "config")

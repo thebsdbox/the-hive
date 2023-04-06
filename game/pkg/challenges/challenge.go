@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	apiv1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -34,5 +36,47 @@ func (c *Challenge) CreateReadme() error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func deployObjects(ctx context.Context, clientSet *kubernetes.Clientset) error {
+	// Create Front End
+
+	_, err := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault).Create(ctx, frontEndDeployment, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	_, err = clientSet.CoreV1().Services(apiv1.NamespaceDefault).Create(ctx, frontEndService, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	// Create Middle tier
+
+	_, err = clientSet.AppsV1().Deployments(apiv1.NamespaceDefault).Create(ctx, middleEndDeployment, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	_, err = clientSet.CoreV1().Services(apiv1.NamespaceDefault).Create(ctx, middleEndService, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	// Create Backend
+
+	_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, backEndConfigMap, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	_, err = clientSet.AppsV1().Deployments(apiv1.NamespaceDefault).Create(ctx, backEndDeployment, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	_, err = clientSet.CoreV1().Services(apiv1.NamespaceDefault).Create(ctx, backendEndService, v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
