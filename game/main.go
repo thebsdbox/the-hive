@@ -20,6 +20,7 @@ import (
 	"github.com/thebsdbox/the-hive/game/pkg/challenges"
 	"github.com/thebsdbox/the-hive/game/pkg/k3d"
 	"golang.org/x/term"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // Intro
@@ -67,13 +68,15 @@ func main() {
 
 	// Get kubernetes client
 	homeConfigPath := filepath.Join(os.Getenv("HOME"), ".kube", "config")
+	rest, err := clientcmd.BuildConfigFromFlags("", homeConfigPath)
+
 	clientset, err := k8s.NewClientset(homeConfigPath, false, "")
 	if err != nil {
 		log.Fatalf("could not create k8s clientset from external file: %q: %v", homeConfigPath, err)
 	}
 
 	// Give the challenge the Kubernetes GO client
-	err = challenge.DeployFunc(ctx, clientset)
+	err = challenge.DeployFunc(ctx, clientset, rest)
 	if err != nil {
 		panic(err)
 	}

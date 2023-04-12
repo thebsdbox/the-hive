@@ -7,13 +7,14 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var challenge2 = Challenge{
 	Name:        "The pod wont start 🙅‍♂️ ",
 	Description: "Will it ever be ready?  ¯\\_(ツ)_/¯",
 	AllowedTime: 4 * time.Minute,
-	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
+	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset, r *rest.Config) error {
 
 		replicas := int32(2)
 		backEndDeployment.Spec.Replicas = &replicas

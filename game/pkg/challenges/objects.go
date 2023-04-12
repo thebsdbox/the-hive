@@ -1,6 +1,8 @@
 package challenges
 
 import (
+	"embed"
+
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,6 +16,30 @@ import (
 ///////////////////////////////////////////////////////////////////
 
 // This configmap contains the static HTML that makes up the webpage
+//go:embed assets/index.html
+//go:embed assets/image1.png
+//go:embed assets/style.css
+var f embed.FS
+
+func dynamicConfigMap() *apiv1.ConfigMap {
+
+	index, _ := f.ReadFile("assets/index.html")
+	style, _ := f.ReadFile("assets/style.css")
+	image, _ := f.ReadFile("assets/image1.png")
+
+	return &apiv1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "hive-html",
+		},
+		Data: map[string]string{
+			"index.html": string(index),
+			"style.css":  string(style),
+		},
+		BinaryData: map[string][]byte{
+			"image1.png": image,
+		},
+	}
+}
 
 var backEndConfigMap = &apiv1.ConfigMap{
 	ObjectMeta: metav1.ObjectMeta{
