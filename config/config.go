@@ -26,14 +26,14 @@ var (
 )
 
 var (
-	DefaultImage, PortNumber, SessionsFile, PWDContainerName, L2ContainerName, L2Subdomain, HashKey, SSHKeyPath, L2RouterIP, CookieHashKey, CookieBlockKey, PlaygroundLifetime string
-	UseLetsEncrypt, ExternalDindVolume, NoWindows                                                                                                                              bool
-	LetsEncryptCertsDir                                                                                                                                                        string
-	MaxLoadAvg                                                                                                                                                                 float64
-	ForceTLS                                                                                                                                                                   bool
-	SecureCookie                                                                                                                                                               *securecookie.SecureCookie
-	AdminToken                                                                                                                                                                 string
-	MaxInstances                                                                                                                                                               int
+	DefaultImage, PortNumber, SessionsFile, PWDContainerName, L2ContainerName, L2Subdomain, HashKey, SSHKeyPath, L2RouterIP, CookieHashKey, CookieBlockKey, PlaygroundLifetime, UX string
+	UseLetsEncrypt, ExternalDindVolume, NoWindows                                                                                                                                  bool
+	LetsEncryptCertsDir                                                                                                                                                            string
+	MaxLoadAvg                                                                                                                                                                     float64
+	ForceTLS                                                                                                                                                                       bool
+	SecureCookie                                                                                                                                                                   *securecookie.SecureCookie
+	AdminToken                                                                                                                                                                     string
+	MaxInstances                                                                                                                                                                   int
 )
 
 // Unsafe enables a number of unsafe features when set. It is principally
@@ -49,6 +49,8 @@ var SegmentId string
 var Providers = map[string]map[string]*oauth2.Config{}
 
 func ParseFlags() {
+	flag.StringVar(&UX, "ux", "", "Specified with user interface is used by the-hive")
+
 	flag.StringVar(&LetsEncryptCertsDir, "letsencrypt-certs-dir", "/certs", "Path where let's encrypt certs will be stored")
 	flag.BoolVar(&UseLetsEncrypt, "letsencrypt-enable", false, "Enabled let's encrypt tls certificates")
 	flag.BoolVar(&ForceTLS, "tls", false, "Use TLS to connect to docker daemons")
