@@ -51,15 +51,16 @@ RUN mkdir -p /var/run/pwd/certs && mkdir -p /var/run/pwd/uploads \
 # Install kubectl
 RUN curl -Lo ./kubectl https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl \
     && chmod +x ./kubectl \
-    && sudo mv ./kubectl /usr/local/bin/kubectl
+    && sudo mv ./kubectl /usr/local/bin/kubectl \
+    && kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
 
 # Install Cilium CLI
 RUN curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.13.1/cilium-linux-amd64.tar.gz \
     && tar xzv -f cilium-linux-amd64.tar.gz -C /usr/local/bin && rm cilium-linux-amd64.tar.gz
 
 # Install helm-3
-RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
-    && chmod +x get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
+#RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+#    && chmod +x get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
 
 ## Get Kind configuration
 #RUN curl -L https://docs.cilium.io/en/v1.13/_downloads/5d189e574ddd393eb1bcf12c6937ce0f/kind-config.yaml > kind.yaml
@@ -69,7 +70,7 @@ RUN curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/d
     && tar xzv -f hubble-linux-amd64.tar.gz -C /usr/local/bin && rm hubble-linux-amd64.tar.gz
 
 COPY ["game", "/usr/local/bin"]
-COPY ["hubble.yaml", "tetragon.yaml", "./root/"]
+COPY ["hubble.yaml", "tetragon.yaml", "./manifests/"]
 
 # Remove IPv6 alias for localhost and start docker in the background ...
 CMD cat /etc/hosts >/etc/hosts.bak && \
