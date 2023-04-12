@@ -196,7 +196,7 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	}
 	var wg sync.WaitGroup
 	var execErr error
-
+	hack := []string{"sh", "-c", "mount bpffs -t bpf /sys/fs/bpf ; mount --make-shared /sys/fs/bpf ; mkdir -p /run/cilium/cgroupv2 ; mount -t cgroup2 none /run/cilium/cgroupv2 ; mount --make-shared /run/cilium/cgroupv2"}
 	for _, node := range nodes {
 		if strings.HasSuffix(node.Name, "lb") {
 			continue
@@ -206,24 +206,30 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 
 		go func(node *k3d.Node) {
 			defer wg.Done()
-
-			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "bpffs", "-t", "bpf", "/sys/fs/bpf"})
+			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, hack)
 			if err != nil {
 				execErr = err
 			}
-			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/sys/fs/bpf"})
-			if err != nil {
-				execErr = err
-			}
-			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mkdir", "-p", "/run/cilium/cgroupv2"})
-			if err != nil {
-				execErr = err
-			}
-			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "-t", "cgroup2", "none", "/run/cilium/cgroupv2"})
-			if err != nil {
-				execErr = err
-			}
-			err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/run/cilium/cgroupv2"})
+			// err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "bpffs", "-t", "bpf", "/sys/fs/bpf"})
+			// if err != nil {
+			// 	execErr = err
+			// }
+			// err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/sys/fs/bpf"})
+			// if err != nil {
+			// 	execErr = err
+			// }
+			// err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mkdir", "-p", "/run/cilium/cgroupv2"})
+			// if err != nil {
+			// 	execErr = err
+			// }
+			// err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "-t", "cgroup2", "none", "/run/cilium/cgroupv2"})
+			// if err != nil {
+			// 	execErr = err
+			// }
+			// err = k3drt.SelectedRuntime.ExecInNode(ctx, node, []string{"mount", "--make-shared", "/run/cilium/cgroupv2"})
+			// if err != nil {
+			// 	execErr = err
+			// }
 		}(node)
 
 	}
@@ -231,7 +237,6 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	if execErr != nil {
 		return nil, execErr
 	}
-
 	logrus.Infof("🧑‍💻  installing Cilium")
 
 	cmd := exec.CommandContext(ctx, "kubectl", append([]string{"create", "-f", "-"})...)
@@ -246,6 +251,34 @@ func CreateCluster(name string) (*k3d.Cluster, error) {
 	if err != nil {
 		return nil, err
 	}
+	cmd = exec.CommandContext(ctx, "cilium", "status", "--wait")
+	// Pass through our environment
+	cmd.Env = os.Environ()
+	// Pass through our std{out,err} and make our resolved buffer stdin.
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	//cmd.Stdin = strings.NewReader(cilium)
+	err = cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	// cmd := exec.CommandContext(ctx, "cilium", "install",
+	// 	"--helm-set", "hubble.relay.enabled=true",
+	// 	"--helm-set", "hubble.ui.enabled=true",
+	// 	"--helm-set", "hubble.enabled=true",
+	// 	"--helm-set", "kubeProxyReplacement=strict",
+	// )
+	// // Pass through our environment
+	// cmd.Env = os.Environ()
+	// // Pass through our std{out,err} and make our resolved buffer stdin.
+	// cmd.Stderr = os.Stderr
+	// cmd.Stdout = os.Stdout
+	// //cmd.Stdin = strings.NewReader(cilium)
+	// err = cmd.Run()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// logrus.Infof("🧑‍💻  installing Tetragon")
 

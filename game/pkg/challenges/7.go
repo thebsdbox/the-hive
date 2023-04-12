@@ -5,13 +5,14 @@ import (
 	"time"
 
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var challenge7 = Challenge{
 	Name:        "More copies 👯 required",
 	Description: "¯\\_(ツ)_/¯",
 	AllowedTime: 2 * time.Minute,
-	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset) error {
+	DeployFunc: func(ctx context.Context, clientSet *kubernetes.Clientset, r *rest.Config) error {
 
 		replicas := int32(0)
 		backEndDeployment.Spec.Replicas = &replicas

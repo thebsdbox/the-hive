@@ -8,6 +8,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // Challenges contains all of the Kubernetes challenges
@@ -19,7 +20,7 @@ type Challenge struct {
 	Description string
 	AllowedTime time.Duration
 	ClusterName string
-	DeployFunc  func(ctx context.Context, clientSet *kubernetes.Clientset) error
+	DeployFunc  func(ctx context.Context, clientSet *kubernetes.Clientset, r *rest.Config) error
 	Readme      string
 }
 
@@ -64,7 +65,7 @@ func deployObjects(ctx context.Context, clientSet *kubernetes.Clientset) error {
 
 	// Create Backend
 
-	_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, backEndConfigMap, v1.CreateOptions{})
+	_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, dynamicConfigMap(), v1.CreateOptions{})
 	if err != nil {
 		return err
 	}
