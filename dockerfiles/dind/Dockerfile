@@ -54,7 +54,7 @@ RUN curl -Lo ./kubectl https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl
     && sudo mv ./kubectl /usr/local/bin/kubectl
 
 # Install Cilium CLI
-RUN curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.13.0/cilium-linux-amd64.tar.gz \
+RUN curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/v0.13.1/cilium-linux-amd64.tar.gz \
     && tar xzv -f cilium-linux-amd64.tar.gz -C /usr/local/bin && rm cilium-linux-amd64.tar.gz
 
 # Install helm-3
