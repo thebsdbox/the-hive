@@ -39,7 +39,7 @@ var challenge4 = Challenge{
 
 		clientSet.NetworkingV1().NetworkPolicies(apiv1.NamespaceDefault).Create(ctx, net, v1.CreateOptions{})
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, false)
 
 	},
 	Readme: `

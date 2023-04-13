@@ -85,7 +85,7 @@ var challenge9 = Challenge{
 			return err
 		}
 		fmt.Print(x.APIVersion)
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, true)
 	},
 	Readme: `
 Welcome to "The Hive"

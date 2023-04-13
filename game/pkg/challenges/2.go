@@ -32,7 +32,7 @@ var challenge2 = Challenge{
 			PeriodSeconds:       5,
 		}
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, false)
 
 	},
 	Readme: `

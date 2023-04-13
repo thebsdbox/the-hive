@@ -19,7 +19,7 @@ var challenge3 = Challenge{
 		backEndDeployment.Spec.Replicas = &replicas
 		backendEndService.Spec.Ports[0].TargetPort = intstr.FromInt(81) // ruhroh
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, true)
 
 	},
 	Readme: `

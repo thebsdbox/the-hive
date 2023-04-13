@@ -33,14 +33,14 @@ func (c *Challenge) CreateReadme() error {
 	}
 	defer f.Close()
 
-	_, err = f.WriteString(c.Readme)
+	_, err = f.WriteString(readmeHeader + c.Readme)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func deployObjects(ctx context.Context, clientSet *kubernetes.Clientset) error {
+func deployObjects(ctx context.Context, clientSet *kubernetes.Clientset, win bool) error {
 	// Create Front End
 
 	_, err := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault).Create(ctx, frontEndDeployment, v1.CreateOptions{})
@@ -64,8 +64,13 @@ func deployObjects(ctx context.Context, clientSet *kubernetes.Clientset) error {
 	}
 
 	// Create Backend
+	if win {
+		_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, winConfigMap(), v1.CreateOptions{})
 
-	_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, dynamicConfigMap(), v1.CreateOptions{})
+	} else {
+		_, err = clientSet.CoreV1().ConfigMaps(apiv1.NamespaceDefault).Create(ctx, trayagainConfigMap(), v1.CreateOptions{})
+
+	}
 	if err != nil {
 		return err
 	}
