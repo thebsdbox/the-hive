@@ -11,21 +11,44 @@ import (
 
 ///////////////////////////////////////////////////////////////////
 //
+// Text
+//
+///////////////////////////////////////////////////////////////////
+
+const readmeHeader = `Welcome to "The Hive"
+--------------------------------
+
+Enable hubble (optional)
+-------------
+kubectl apply -f ./manifests/hubble.yaml
+
+Enable tetragon (optional)
+-------------
+kubectl apply -f ./manifests/tetragon.yaml
+
+`
+
+///////////////////////////////////////////////////////////////////
+//
 // Configmaps
 //
 ///////////////////////////////////////////////////////////////////
 
 // This configmap contains the static HTML that makes up the webpage
-//go:embed assets/index.html
-//go:embed assets/image1.png
-//go:embed assets/style.css
+//go:embed assets/1index.html
+//go:embed assets/1image.png
+//go:embed assets/1style.css
+
+//go:embed assets/2index.html
+//go:embed assets/2script.js
+//go:embed assets/2style.css
 var f embed.FS
 
-func dynamicConfigMap() *apiv1.ConfigMap {
+func trayagainConfigMap() *apiv1.ConfigMap {
 
-	index, _ := f.ReadFile("assets/index.html")
-	style, _ := f.ReadFile("assets/style.css")
-	image, _ := f.ReadFile("assets/image1.png")
+	index, _ := f.ReadFile("assets/1index.html")
+	style, _ := f.ReadFile("assets/1style.css")
+	image, _ := f.ReadFile("assets/1image.png")
 
 	return &apiv1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -37,6 +60,24 @@ func dynamicConfigMap() *apiv1.ConfigMap {
 		},
 		BinaryData: map[string][]byte{
 			"image1.png": image,
+		},
+	}
+}
+
+func winConfigMap() *apiv1.ConfigMap {
+
+	index, _ := f.ReadFile("assets/2index.html")
+	style, _ := f.ReadFile("assets/2style.css")
+	script, _ := f.ReadFile("assets/2script.js")
+
+	return &apiv1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "hive-html",
+		},
+		Data: map[string]string{
+			"index.html": string(index),
+			"style.css":  string(style),
+			"script.js":  string(script),
 		},
 	}
 }

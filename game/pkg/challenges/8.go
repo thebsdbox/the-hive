@@ -30,7 +30,7 @@ var challenge8 = Challenge{
 			},
 		}
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, true)
 	},
 	Readme: `
 Welcome to "The Hive"
