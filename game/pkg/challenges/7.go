@@ -17,7 +17,7 @@ var challenge7 = Challenge{
 		replicas := int32(0)
 		backEndDeployment.Spec.Replicas = &replicas
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, false)
 	},
 	Readme: `
 Welcome to "The Hive"

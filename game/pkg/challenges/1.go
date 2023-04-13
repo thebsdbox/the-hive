@@ -21,15 +21,10 @@ var challenge1 = Challenge{
 
 		backendEndService.Spec.Selector["app"] = "wrong" // ruhroh
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, false)
 	},
 	Readme: `
-Welcome to "The Hive"
---------------------------------
 
-Enable hubble (optional)
--------------
-kubectl expose -n kube-system deploy hubble-ui --type=NodePort --name hubble-node
 `,
 }
 

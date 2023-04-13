@@ -18,7 +18,7 @@ var challenge5 = Challenge{
 		backEndDeployment.Spec.Replicas = &replicas
 		backEndDeployment.Spec.Template.Spec.Containers[0].Image = "nginx:1.12-nope"
 
-		return deployObjects(ctx, clientSet)
+		return deployObjects(ctx, clientSet, false)
 	},
 	Readme: `
 Welcome to "The Hive"
